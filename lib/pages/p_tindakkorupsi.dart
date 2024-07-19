@@ -77,7 +77,7 @@ class _PengaduanTindakKorupsiState extends State<PengaduanTindakKorupsi> {
         if (data.value == 1) {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => PengaduanTindakKorupsi()),
+            MaterialPageRoute(builder: (context) => TindakKorupsiList()),
             (route) => false,
           );
         }
@@ -168,30 +168,6 @@ class _PengaduanTindakKorupsiState extends State<PengaduanTindakKorupsi> {
               ),
               SizedBox(height: 20),
               Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0), // Atur panjang tombol di sini
-              child: ElevatedButton(
-                onPressed: () {
-                   Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => TindakKorupsiList()),
-                                );
-                },
-                child: Text(
-                  'Lihat Data',
-                  style: GoogleFonts.openSans(
-                    textStyle: Theme.of(context).textTheme.displayLarge,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                ),
-              ),
-            ),
-              SizedBox(height: 20),
-              Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,6 +188,7 @@ class _PengaduanTindakKorupsiState extends State<PengaduanTindakKorupsi> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
+                        controller: txtNamapelapor,
                         onChanged: (value) {
                           setState(() {
                             isNamapelaporValid = value.isNotEmpty;
@@ -253,6 +230,7 @@ class _PengaduanTindakKorupsiState extends State<PengaduanTindakKorupsi> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
+                        controller: txtNohp,
                         onChanged: (value) {
                           setState(() {
                             isNohpValid = value.isNotEmpty;
@@ -329,6 +307,7 @@ class _PengaduanTindakKorupsiState extends State<PengaduanTindakKorupsi> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
+                        controller: txtUraian,
                         onChanged: (value) {
                           setState(() {
                             isNohpValid = value.isNotEmpty;

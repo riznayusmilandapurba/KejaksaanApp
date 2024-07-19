@@ -1,67 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kejaksaan/pages/jmslist.dart';
-import 'package:http/http.dart' as http;
+import 'package:kejaksaan/pages/user.dart';
+import 'package:kejaksaan/utils/session_manager.dart';
 
-class JMS extends StatefulWidget {
-
-  const JMS({Key? key}) : super(key: key);
+class UserEdit extends StatefulWidget {
+  const UserEdit({Key? key}) : super(key: key);
 
   @override
-  State<JMS> createState() => _JMSState();
+  State<UserEdit> createState() => _UserEditState();
 }
 
-class _JMSState extends State<JMS> {
-  bool isNamaSekolahValid = false;
-  bool isNamaPemohonValid = false;
+class _UserEditState extends State<UserEdit> {
+  late TextEditingController _namaController;
+  late TextEditingController _phoneController;
+  late TextEditingController _alamatController;
 
-  final TextEditingController txtNamaSekolah = TextEditingController();
-  final TextEditingController txtNamaPemohon = TextEditingController();
-  GlobalKey<FormState> keyForm = GlobalKey<FormState>();
-
-  bool isLoading = false;
-  final bool isAdmin = true;
-
-  Future<void> JMSAdd() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('http://192.168.0.102/kejaksaan_server/JaksaMasukSekolah_POST.php'),
-      );
-
-      request.fields['namasekolah'] = txtNamaSekolah.text;
-      request.fields['namapemohon'] = txtNamaPemohon.text;
-      request.fields['status'] = 'pending';
-
-      var response = await request.send();
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Berhasil Tambah Data')),
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => JMSList(isAdmin: isAdmin)),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal Tambah Data')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    _namaController = TextEditingController(text: sessionManager.nama ?? '');
+    _phoneController = TextEditingController(text: sessionManager.phone ?? '');
+    _alamatController = TextEditingController(text: sessionManager.alamat ?? '');
   }
+
+  @override
+  void dispose() {
+    _namaController.dispose();
+    _phoneController.dispose();
+    _alamatController.dispose();
+    super.dispose();
+  }
+
+  void _saveChanges() {
+  // Ubah tipe data id sesuai dengan yang diharapkan oleh SessionManager
+  int id = sessionManager.id ?? 0;
+  sessionManager.nama = _namaController.text;
+  sessionManager.phone = _phoneController.text;
+  sessionManager.alamat = _alamatController.text;
+
+  sessionManager.saveSession(
+    1,
+    id, // Gunakan id yang sudah diubah tipe datanya
+    sessionManager.nama ?? '',
+    sessionManager.email ?? '',
+    sessionManager.phone ?? '',
+    sessionManager.alamat ?? '',
+    sessionManager.ktp ?? '',
+    sessionManager.role ?? '',
+  );
+
+  Navigator.pop(context);
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => User()),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +85,7 @@ class _JMSState extends State<JMS> {
                 ),
                 child: Center(
                   child: Text(
-                    "JMS (JAKSA MASUK SEKOLAH)",
+                    "EDIT USER",
                     style: GoogleFonts.prozaLibre(
                       textStyle: Theme.of(context).textTheme.headline6,
                       fontSize: 28,
@@ -109,9 +103,9 @@ class _JMSState extends State<JMS> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Sekolah yang dituju',
+                      'Nama',
                       style: GoogleFonts.openSans(
-                        textStyle: Theme.of(context).textTheme.displayLarge,
+                        textStyle: Theme.of(context).textTheme.headline6,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Color.fromRGBO(107, 140, 66, 1),
@@ -123,22 +117,17 @@ class _JMSState extends State<JMS> {
                         color: Color.fromRGBO(0, 0, 0, 0.05),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: TextField(
-                        controller: txtNamaSekolah,
+                      child: TextFormField(
+                        controller: _namaController,
                         onChanged: (value) {
-                          setState(() {
-                            isNamaSekolahValid = value.isNotEmpty;
-                          });
+                          setState(() {});
                         },
                         decoration: InputDecoration(
-                          hintText: 'Enter your school',
+                          hintText: 'Edit your name',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none,
                           ),
-                          suffixIcon: isNamaSekolahValid
-                              ? Icon(Icons.check_circle_outline, color: Colors.grey)
-                              : null,
                         ),
                       ),
                     ),
@@ -151,9 +140,9 @@ class _JMSState extends State<JMS> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Nama Pemohon',
+                      'Nomor Handphone',
                       style: GoogleFonts.openSans(
-                        textStyle: Theme.of(context).textTheme.displayLarge,
+                        textStyle: Theme.of(context).textTheme.headline6,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Color.fromRGBO(107, 140, 66, 1),
@@ -165,22 +154,54 @@ class _JMSState extends State<JMS> {
                         color: Color.fromRGBO(0, 0, 0, 0.05),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: TextField(
-                        controller: txtNamaPemohon,
+                      child: TextFormField(
+                        controller: _phoneController,
                         onChanged: (value) {
-                          setState(() {
-                            isNamaPemohonValid = value.isNotEmpty;
-                          });
+                          setState(() {});
                         },
                         decoration: InputDecoration(
-                          hintText: 'Enter your fullname',
+                          hintText: 'Edit your phone',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none,
                           ),
-                          suffixIcon: isNamaPemohonValid
-                              ? Icon(Icons.check_circle_outline, color: Colors.blue)
-                              : null,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Alamat',
+                      style: GoogleFonts.openSans(
+                        textStyle: Theme.of(context).textTheme.headline6,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(107, 140, 66, 1),
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(0, 0, 0, 0.05),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: TextFormField(
+                        controller: _alamatController,
+                        onChanged: (value) {
+                          setState(() {});
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Edit your Address',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
@@ -191,27 +212,17 @@ class _JMSState extends State<JMS> {
                 padding: const EdgeInsets.symmetric(horizontal: 0.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    if (isNamaSekolahValid && isNamaPemohonValid) {
-                      JMSAdd();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Harap isi semua field')),
-                      );
-                    }
+                    _saveChanges();
                   },
-                  child: isLoading
-                      ? CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        )
-                      : Text(
-                          'Submit',
-                          style: GoogleFonts.openSans(
-                            textStyle: Theme.of(context).textTheme.displayLarge,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                  child: Text(
+                    'Update',
+                    style: GoogleFonts.openSans(
+                      textStyle: Theme.of(context).textTheme.headline6,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromRGBO(107, 140, 66, 1),
                   ),

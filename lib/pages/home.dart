@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kejaksaan/pages/jms.dart';
+import 'package:kejaksaan/pages/jmslist.dart';
 import 'package:kejaksaan/pages/p_alirankepercayaan.dart';
+import 'package:kejaksaan/pages/p_alirankepercayaanlist.dart';
 import 'package:kejaksaan/pages/p_pegawai.dart';
+import 'package:kejaksaan/pages/p_pegawailist.dart';
 import 'package:kejaksaan/pages/p_tindakkorupsi.dart';
+import 'package:kejaksaan/pages/p_tindakkorupsilist.dart';
 import 'package:kejaksaan/pages/penyuluhanhukum.dart';
+import 'package:kejaksaan/pages/penyuluhanlist.dart';
 import 'package:kejaksaan/pages/poskopilkada.dart';
+import 'package:kejaksaan/pages/poskopilkadalist.dart';
 import 'package:kejaksaan/pages/user.dart';
 
 
@@ -18,6 +24,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+final bool isAdmin = true;
+
  @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +130,7 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PengaduanPegawai()), 
+                  MaterialPageRoute(builder: (context) => PengaduanPegawaiList()), 
                 );
               },
               child: Card(
@@ -171,7 +179,7 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PengaduanTindakKorupsi()), 
+                  MaterialPageRoute(builder: (context) => TindakKorupsiList()), 
                 );
               },
               child: Card(
@@ -220,7 +228,7 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => JMS()), 
+                  MaterialPageRoute(builder: (context) => JMSList(isAdmin: isAdmin)), 
                 );
               },
               child: Card(
@@ -269,7 +277,7 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PenyuluhanHukum()), 
+                  MaterialPageRoute(builder: (context) => PenyuluhanList()), 
                 );
               },
               child: Card(
@@ -318,7 +326,7 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PengawasanAliranKepercayaan()), 
+                  MaterialPageRoute(builder: (context) => AliranKepercayaanList()), 
                 );
               },
               child: Card(
@@ -367,7 +375,7 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Poskopilkada()), 
+                  MaterialPageRoute(builder: (context) => PoskoPilkadaList()), 
                 );
               },
               child: Card(

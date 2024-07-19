@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:kejaksaan/pages/home.dart';
 import 'package:kejaksaan/pages/login.dart';
 import 'package:kejaksaan/pages/p_pegawaidetail.dart';
+import 'package:kejaksaan/pages/p_tindakkorupsi.dart';
 import 'package:kejaksaan/pages/p_tindakkorupsidetail.dart';
+import 'package:kejaksaan/pages/p_tindakkorupsiedit.dart';
 import 'package:kejaksaan/pages/rating.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -194,7 +196,17 @@ Widget build(BuildContext context) {
                             onPressed: data.status == 'approve' || data.status == 'reject'
                                 ? null
                                 : () {
-                                    // Tambahkan logika untuk edit
+                                        Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => TindakKorupsiEdit(
+                                      id: data.id,
+                                      namapelapor: data.namapelapor,
+                                      nohp: data.nohp,
+                                      ktp: data.ktp,
+                                      uraian: data.uraian,
+                                      laporan: data.laporan,
+                                  )),
+                                );
                                   },
                             color: data.status == 'approve' || data.status == 'reject'
                                 ? Colors.grey
@@ -222,6 +234,17 @@ Widget build(BuildContext context) {
         ],
       ),
     ),
+    floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Arahkan ke halaman tambah data
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PengaduanTindakKorupsi()),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromRGBO(107, 140, 66, 1),
+      ),
     bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

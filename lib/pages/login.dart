@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kejaksaan/models/modellogin.dart';
 import 'package:kejaksaan/pages/home.dart';
@@ -24,6 +25,7 @@ class _LoginState extends State<Login> {
       setState(() {
         isLoading = true;
       });
+
       http.Response res = await http.post(
         Uri.parse('http://192.168.0.102/kejaksaan_server/login.php'),
         body: {
@@ -33,8 +35,9 @@ class _LoginState extends State<Login> {
       );
 
       Modellogin data = modelloginFromJson(res.body.trim());
+
       if (data.value == 1) {
-        sessionManager.saveSession(
+        await sessionManager.saveSession(
           data.value ?? 0,
           data.id ?? 0,
           data.nama ?? "",
@@ -44,29 +47,40 @@ class _LoginState extends State<Login> {
           data.alamat ?? "",
           data.role ?? "",
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${data.message}')));
 
-        if (data.role == 1 || data.role == 2) {
+        print('Role: ${data.role}'); // Debugging role value
+        print('Session Saved');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${data.message}')),
+        );
+
+        // Adjusted to handle string role values
+        if (data.role == "admin" || data.role == "customer") {
+          print('Navigating to Home');
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => Home()),
             (route) => false,
           );
+        } else {
+          print('Invalid role value: ${data.role}');
         }
       } else {
         setState(() {
           isLoading = false;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('${data.message}')));
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${data.message}')),
+        );
       }
     } catch (e) {
       setState(() {
         isLoading = false;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     }
   }
 
@@ -172,8 +186,7 @@ class _LoginState extends State<Login> {
                                         borderSide: BorderSide.none,
                                       ),
                                       suffixIcon: txtEmail.text.isNotEmpty
-                                          ? Icon(Icons.check_circle_outline,
-                                              color: Colors.blue)
+                                          ? Icon(Icons.check_circle_outline, color: Colors.blue)
                                           : null,
                                     ),
                                   ),
@@ -224,8 +237,7 @@ class _LoginState extends State<Login> {
                                         borderSide: BorderSide.none,
                                       ),
                                       suffixIcon: txtPassword.text.isNotEmpty
-                                          ? Icon(Icons.check_circle_outline,
-                                              color: Colors.blue)
+                                          ? Icon(Icons.check_circle_outline, color: Colors.blue)
                                           : null,
                                     ),
                                   ),
@@ -262,6 +274,7 @@ class _LoginState extends State<Login> {
                                 backgroundColor: Colors.white,
                               ),
                             ),
+                            SizedBox(height: 30),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -270,12 +283,12 @@ class _LoginState extends State<Login> {
                                 );
                               },
                               child: Text(
-                                'Dont you have account? Sign Up',
+                                'Dont have an account? Sign Up',
                                 style: GoogleFonts.openSans(
                                   textStyle: Theme.of(context).textTheme.displayLarge,
                                   fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

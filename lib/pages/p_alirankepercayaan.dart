@@ -38,7 +38,7 @@ class _PengawasanAliranKepercayaanState extends State<PengawasanAliranKepercayaa
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.0.102/kejaksaan_server/pengawasaPOST.php'),
+        Uri.parse('http://192.168.0.102/kejaksaan_server/pengawasanPOST.php'),
       );
       request.fields['namapelapor'] = txtNamapelapor.text;
       request.fields['nohp'] = txtNohp.text;
@@ -157,30 +157,6 @@ class _PengawasanAliranKepercayaanState extends State<PengawasanAliranKepercayaa
                       color: Colors.black,
                     ),
                     textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AliranKepercayaanList()),
-                    );
-                  },
-                  child: Text(
-                    'Lihat Data',
-                    style: GoogleFonts.openSans(
-                      textStyle: Theme.of(context).textTheme.displayLarge,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
                   ),
                 ),
               ),

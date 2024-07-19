@@ -31,7 +31,7 @@ class PoskoPilkadaDetail extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   // child: Image.network(
-                  //   // 'http://192.168.100.97/kebudayaan_server/gambar_sejarawan/${data?.foto}',
+                  //   // 'http://192.168.0.102/kebudayaan_server/gambar_sejarawan/${data?.foto}',
                   //   // fit: BoxFit.fill,
                   // ),
                 ),

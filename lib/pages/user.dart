@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kejaksaan/pages/home.dart';
+import 'package:kejaksaan/pages/login.dart';
+import 'package:kejaksaan/pages/rating.dart';
+import 'package:kejaksaan/pages/useredit.dart';
+import 'package:kejaksaan/utils/session_manager.dart';
+
 
 
 
@@ -13,41 +19,36 @@ class User extends StatefulWidget {
 }
 
 class _UserState extends State<User> {
+  void initState() {
+    super.initState();
+    sessionManager.getSession().then((_) {
+      setState(() {}); 
+    });
+  }
+
    @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 241, 241, 241),
       appBar: AppBar(
-        title: Text(
-          '12:23',
-          style: GoogleFonts.alata(
-            textStyle: Theme.of(context).textTheme.headline6,
-            fontSize: 15,
-            fontStyle: FontStyle.normal,
-            color: Colors.black,
-          ),
-        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          color: Colors.black,
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
-            // Action untuk kembali
+            Navigator.pop(context);
           },
         ),
-        actions: [
-          Icon(Icons.signal_cellular_4_bar_sharp),
-          Icon(Icons.wifi),
-          Icon(Icons.battery_full),
-        ],
       ),
       body: SingleChildScrollView(
-        child: Column(
+        child: sessionManager.nama != null && sessionManager.email != null
+        ? Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
-                "Akun Saya",
+                "Profil Saya",
                 style: GoogleFonts.montserrat(
                   textStyle: Theme.of(context).textTheme.headline6,
                   fontSize: 16,
@@ -81,7 +82,7 @@ class _UserState extends State<User> {
                                   children: [
                                     SizedBox(width: 8.0),
                                     Text(
-                                      "Keira Herlambang",
+                                      '${sessionManager.nama}',
                                       style: GoogleFonts.poppins(
                                         textStyle: Theme.of(context).textTheme.headline6,
                                         fontSize: 14,
@@ -94,7 +95,7 @@ class _UserState extends State<User> {
                                 ),
                                 SizedBox(height: 8.0),
                                 Text(
-                                  "ilpengding@gmail.com",
+                                  '${sessionManager.email}',
                                   style: GoogleFonts.portLligatSans(
                                     textStyle: Theme.of(context).textTheme.headline6,
                                     fontSize: 13,
@@ -105,7 +106,7 @@ class _UserState extends State<User> {
                                 ),
                                 SizedBox(height: 8.0),
                                 Text(
-                                  "088123146555",
+                                  '${sessionManager.phone}',
                                   style: GoogleFonts.openSans(
                                     textStyle: Theme.of(context).textTheme.headline6,
                                     fontSize: 13,
@@ -128,7 +129,10 @@ class _UserState extends State<User> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
-                                        
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => UserEdit()),
+                        );               
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white, 
@@ -165,7 +169,7 @@ class _UserState extends State<User> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Alamat",
+                    'Alamat',
                     style: GoogleFonts.poppins(
                       textStyle: Theme.of(context).textTheme.headline6,
                       fontSize: 16,
@@ -175,7 +179,7 @@ class _UserState extends State<User> {
                   ),
                   SizedBox(height: 15),
                   Text(
-                    "Jl. HR. Rasuna Said",
+                   '${sessionManager.alamat}',
                     style: GoogleFonts.openSans(
                       textStyle: Theme.of(context).textTheme.headline6,
                       fontSize: 14,
@@ -189,14 +193,55 @@ class _UserState extends State<User> {
                     thickness: 1,
                   ),
                 ],
+                
               ),
             ),
-
-
+          
             ],
+            
+          )
+
+            : CircularProgressIndicator(),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Kategori',
           ),
-        ),
-      
+          BottomNavigationBarItem(
+            icon: Icon(Icons.star),
+            label: 'Rating',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.logout),
+            label: 'Log Out',
+          ),
+        ],
+        backgroundColor: Color.fromRGBO(107, 140, 66, 1),
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Home()),
+              );
+              break;
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Rating()),
+              );
+              break;
+            case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Login()),
+              );
+              break;
+          }
+        },
+      ),
     );
   }
 }

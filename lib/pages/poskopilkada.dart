@@ -162,30 +162,6 @@ class _PoskopilkadaState extends State<Poskopilkada> {
               ),
               SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => PoskoPilkadaList()),
-                    );
-                  },
-                  child: Text(
-                    'Lihat Data',
-                    style: GoogleFonts.openSans(
-                      textStyle: Theme.of(context).textTheme.displayLarge,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

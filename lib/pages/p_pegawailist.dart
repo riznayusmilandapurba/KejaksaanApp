@@ -3,7 +3,9 @@ import 'package:kejaksaan/models/modelp_pegawai.dart';
 import 'package:http/http.dart' as http;
 import 'package:kejaksaan/pages/home.dart';
 import 'package:kejaksaan/pages/login.dart';
+import 'package:kejaksaan/pages/p_pegawai.dart';
 import 'package:kejaksaan/pages/p_pegawaidetail.dart';
+import 'package:kejaksaan/pages/p_pegawaiedit.dart';
 import 'package:kejaksaan/pages/rating.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -194,7 +196,16 @@ Widget build(BuildContext context) {
                             onPressed: data.status == 'approve' || data.status == 'reject'
                                 ? null
                                 : () {
-                                    // Tambahkan logika untuk edit
+                                    Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => PengaduanPegawaiEdit(
+                                      id: data.id,
+                                      namapelapor: data.namapelapor,
+                                      nohp: data.nohp,
+                                      ktp: data.ktp,
+                                      laporan: data.laporan,
+                                  )),
+                                );
                                   },
                             color: data.status == 'approve' || data.status == 'reject'
                                 ? Colors.grey
@@ -222,6 +233,17 @@ Widget build(BuildContext context) {
         ],
       ),
     ),
+    floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Arahkan ke halaman tambah data
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PengaduanPegawai()),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromRGBO(107, 140, 66, 1),
+      ),
     bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

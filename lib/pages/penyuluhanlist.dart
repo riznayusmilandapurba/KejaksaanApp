@@ -5,6 +5,8 @@ import 'package:kejaksaan/pages/home.dart';
 import 'package:kejaksaan/pages/login.dart';
 import 'package:kejaksaan/pages/p_pegawaidetail.dart';
 import 'package:kejaksaan/pages/penyuluhandetail.dart';
+import 'package:kejaksaan/pages/penyuluhanedit.dart';
+import 'package:kejaksaan/pages/penyuluhanhukum.dart';
 import 'package:kejaksaan/pages/rating.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -194,7 +196,16 @@ Widget build(BuildContext context) {
                             onPressed: data.status == 'approve' || data.status == 'reject'
                                 ? null
                                 : () {
-                                    // Tambahkan logika untuk edit
+                                   Navigator.push(
+                                  context,
+                                    MaterialPageRoute(builder: (context) => PenyuluhanEdit(
+                                      id: data.id,
+                                      nama: data.nama,
+                                      nohp: data.nohp,
+                                      ktp: data.ktp,
+                                      permasalahan: data.permasalahan,
+                                  )),
+                                   );
                                   },
                             color: data.status == 'approve' || data.status == 'reject'
                                 ? Colors.grey
@@ -222,6 +233,17 @@ Widget build(BuildContext context) {
         ],
       ),
     ),
+    floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Arahkan ke halaman tambah data
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PenyuluhanHukum()),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromRGBO(107, 140, 66, 1),
+      ),
     bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

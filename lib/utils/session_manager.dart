@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SessionManager{
+class SessionManager {
   int? value;
   int? id;
   String? nama;
@@ -10,23 +10,21 @@ class SessionManager{
   String? alamat;
   String? role;
 
-  
-
-  //simpan sesi
-  Future<void> saveSession(int val, int id, String nama,  String email, String phone, String ktp, String alamat, String role  ) async{
+  // Simpan sesi
+  Future<void> saveSession(int value, int id, String nama, String email, String phone, String ktp, String alamat, String role) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setInt("value", val);
-    pref.setInt("id", id);
-    pref.setString("nama", nama);
-    pref.setString("email", email);
-    pref.setString("phone", phone);
-    pref.setString("ktp", ktp);
-    pref.setString("alamat", alamat);
-    pref.setString("role", role);
-    
+    await pref.setInt("value", value);
+    await pref.setInt("id", id);
+    await pref.setString("nama", nama);
+    await pref.setString("email", email);
+    await pref.setString("phone", phone);
+    await pref.setString("ktp", ktp);
+    await pref.setString("alamat", alamat);
+    await pref.setString("role", role);
   }
 
-  Future getSession() async{
+  // Ambil sesi
+  Future<void> getSession() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     value = pref.getInt("value");
     id = pref.getInt("id");
@@ -36,15 +34,14 @@ class SessionManager{
     ktp = pref.getString("ktp");
     alamat = pref.getString("alamat");
     role = pref.getString("role");
-    
-  }
-  //remove --> logout
-  Future clearSession() async{
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.clear();
   }
 
+  // Hapus sesi -> logout
+  Future<void> clearSession() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.clear();
+  }
 }
 
-//instance class biar d panggil
+// Instance class biar dipanggil
 SessionManager sessionManager = SessionManager();
