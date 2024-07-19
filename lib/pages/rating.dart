@@ -32,7 +32,7 @@ class _RatingState extends State<Rating> {
       );
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => Home()),
+        MaterialPageRoute(builder: (context) => Home(isAdmin: true)),
         (route) => false,
       );
     } else {

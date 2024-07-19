@@ -266,7 +266,7 @@ Widget build(BuildContext context) {
             case 0:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Home()),
+                MaterialPageRoute(builder: (context) => Home(isAdmin: true)),
               );
               break;
             case 1:

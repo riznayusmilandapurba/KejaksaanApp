@@ -27,7 +27,7 @@ class _LoginState extends State<Login> {
       });
 
       http.Response res = await http.post(
-        Uri.parse('http://192.168.0.102/kejaksaan_server/login.php'),
+        Uri.parse('http://172.22.0.42/kejaksaan_server/login.php'),
         body: {
           "email": txtEmail.text,
           "password": txtPassword.text,
@@ -60,7 +60,7 @@ class _LoginState extends State<Login> {
           print('Navigating to Home');
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => Home()),
+            MaterialPageRoute(builder: (context) => Home(isAdmin: true)),
             (route) => false,
           );
         } else {

@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:kejaksaan/models/modelp_pegawai.dart';
 import 'package:http/http.dart' as http;
-import 'package:kejaksaan/models/modeljms.dart';
 import 'package:kejaksaan/pages/home.dart';
-import 'package:kejaksaan/pages/jms.dart';
 import 'package:kejaksaan/pages/login.dart';
+import 'package:kejaksaan/pages/p_pegawai.dart';
+import 'package:kejaksaan/pages/p_pegawaidetail.dart';
+import 'package:kejaksaan/pages/p_pegawaiedit.dart';
 import 'package:kejaksaan/pages/rating.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class JMSList extends StatefulWidget {
-  final bool isAdmin; // Parameter untuk role
-
-  const JMSList({Key? key, required this.isAdmin}) : super(key: key);
+class PengaduanPegawaiListAdmin extends StatefulWidget {
+  const PengaduanPegawaiListAdmin({Key? key}) : super(key: key);
 
   @override
-  State<JMSList> createState() => _JMSListState();
+  State<PengaduanPegawaiListAdmin> createState() => _PengaduanPegawaiListAdminState();
 }
 
-class _JMSListState extends State<JMSList> {
+class _PengaduanPegawaiListAdminState extends State<PengaduanPegawaiListAdmin> {
   late List<Datum> _p_pegawaiList;
   late List<Datum> _filteredPengaduanpegawai;
   late TextEditingController _searchController;
@@ -33,9 +33,9 @@ class _JMSListState extends State<JMSList> {
 
   Future<void> _getPengaduanpegawai() async {
     try {
-      http.Response res = await http.get(Uri.parse('http://192.168.0.102/kejaksaan_server/JaksaMasukSekolah_GET.php'));
+      http.Response res = await http.get(Uri.parse('http://172.22.0.42/kejaksaan_server/p_pegawaiGET.php'));
       if (res.statusCode == 200) {
-        List<Datum> p_pegawaiList = ModelJMSFromJson(res.body).data ?? [];
+        List<Datum> p_pegawaiList = ModelPPegawaiFromJson(res.body).data ?? [];
         setState(() {
           _p_pegawaiList = p_pegawaiList;
           _filteredPengaduanpegawai = p_pegawaiList;
@@ -54,7 +54,7 @@ class _JMSListState extends State<JMSList> {
     keyword = keyword.toLowerCase();
     setState(() {
       _filteredPengaduanpegawai = _p_pegawaiList.where((p_pegawai) =>
-          p_pegawai.namasekolah.toLowerCase().contains(keyword)
+          p_pegawai.laporan.toLowerCase().contains(keyword)
       ).toList();
     });
   }
@@ -69,20 +69,20 @@ class _JMSListState extends State<JMSList> {
 
   void _deletePengaduan(int index) async {
     Datum p_pegawai = _filteredPengaduanpegawai[index];
-    if (!widget.isAdmin && (p_pegawai.status != 'approve' && p_pegawai.status != 'reject')) {
+    if (p_pegawai.status != 'approve' && p_pegawai.status != 'reject') {
       try {
         http.Response res = await http.post(
-          Uri.parse('http://192.168.0.102/kejaksaan_server/JaksaMasukSekolah_DEL.php'),
+          Uri.parse('http://192.168.0.102/kejaksaan_server/p_pegawaiDEL.php'),
           body: {'id': p_pegawai.id.toString()},
         );
         if (res.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Data berhasil dihapus')),
+            SnackBar(content: Text('Data Pegawai berhasil dihapus')),
           );
           _getPengaduanpegawai();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal menghapus data')),
+            SnackBar(content: Text('Gagal menghapus Data Pegawai')),
           );
         }
       } catch (e) {
@@ -97,24 +97,21 @@ class _JMSListState extends State<JMSList> {
     }
   }
 
-  void _approvePengaduan(int index, String action) async {
+  void _updateStatus(int index, String status) async {
     Datum p_pegawai = _filteredPengaduanpegawai[index];
     try {
       http.Response res = await http.post(
-        Uri.parse('http://192.168.0.102/kejaksaan_server/JaksaMasukSekolah_UPDATE.php'),
-        body: {
-          'id': p_pegawai.id.toString(),
-          'action': action,
-        },
+        Uri.parse('http://192.168.0.102/kejaksaan_server/p_pegawaiUPDATE.php'),
+        body: {'id': p_pegawai.id.toString(), 'status': status},
       );
       if (res.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Data berhasil di-$action')),
+          SnackBar(content: Text('Status berhasil diperbarui')),
         );
         _getPengaduanpegawai();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal $action data')),
+          SnackBar(content: Text('Gagal memperbarui status')),
         );
       }
     } catch (e) {
@@ -178,92 +175,43 @@ class _JMSListState extends State<JMSList> {
                 headingRowHeight: 80,
                 columnSpacing: 20,
                 columns: [
-                  DataColumn(
-                    label: Text(
-                      'No',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Nama Pelapor',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Nama Sekolah',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Status',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Menu',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  DataColumn(label: Text('No', textAlign: TextAlign.center)),
+                  DataColumn(label: Text('Nama Pelapor', textAlign: TextAlign.center)),
+                  DataColumn(label: Text('No. HP', textAlign: TextAlign.center)),
+                  DataColumn(label: Text('Status', textAlign: TextAlign.center)),
+                  DataColumn(label: Text('Menu', textAlign: TextAlign.center)),
                 ],
                 rows: _filteredPengaduanpegawai.asMap().entries.map((entry) {
                   int index = entry.key;
+                  int displayIndex = index + 1;
                   Datum data = entry.value;
                   return DataRow(
                     cells: [
-                      DataCell(Text('${index + 1}')),
-                      DataCell(Text(data.namapemohon)),
-                      DataCell(Text(data.namasekolah)),
+                      DataCell(Text('$displayIndex')),
+                      DataCell(Text(data.namapelapor)),
+                      DataCell(Text(data.nohp)),
                       DataCell(Text(data.status)),
                       DataCell(
-                        widget.isAdmin
-                            ? Row(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.check),
-                                    onPressed: () {
-                                      _approvePengaduan(index, 'approve');
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.clear),
-                                    onPressed: () {
-                                      _approvePengaduan(index, 'reject');
-                                    },
-                                  ),
-                                ],
-                              )
-                            : Row(
-                                children: [
-                                  data.status != 'approve' && data.status != 'reject'
-                                      ? IconButton(
-                                          icon: Icon(Icons.edit),
-                                          onPressed: () {
-                                            // Tambahkan logika untuk edit
-                                          },
-                                          color: Colors.blue,
-                                        )
-                                      : SizedBox(),
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      if (data.status == 'approve' || data.status == 'reject') {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text('Tidak dapat menghapus data dengan status "approve" atau "reject"')),
-                                        );
-                                      } else {
-                                        _deletePengaduan(index);
-                                      }
-                                    },
-                                    color: data.status == 'approve' || data.status == 'reject'
-                                        ? Colors.grey
-                                        : Colors.red,
-                                  ),
-                                ],
-                              ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.check, color: Colors.green),
+                              onPressed: data.status == 'pending'
+                                  ? () {
+                                      _updateStatus(index, 'approve');
+                                    }
+                                  : null,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.clear, color: Colors.red),
+                              onPressed: data.status == 'pending'
+                                  ? () {
+                                      _updateStatus(index, 'reject');
+                                    }
+                                  : null,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   );
@@ -273,18 +221,16 @@ class _JMSListState extends State<JMSList> {
           ],
         ),
       ),
-      floatingActionButton: widget.isAdmin
-          ? null
-          : FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => JMS()),
-                );
-              },
-              child: Icon(Icons.add),
-              backgroundColor: Color.fromRGBO(107, 140, 66, 1),
-            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PengaduanPegawai()),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromRGBO(107, 140, 66, 1),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

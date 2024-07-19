@@ -37,7 +37,7 @@ class _PengaduanPegawaiState extends State<PengaduanPegawai> {
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.0.102/kejaksaan_server/p_pegawaiPOST.php'),
+        Uri.parse('http://172.22.0.42/kejaksaan_server/p_pegawaiPOST.php'),
       );
       request.fields['namapelapor'] = txtNamapelapor.text;
       request.fields['nohp'] = txtNohp.text;

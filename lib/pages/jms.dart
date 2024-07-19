@@ -30,7 +30,7 @@ class _JMSState extends State<JMS> {
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.0.102/kejaksaan_server/JaksaMasukSekolah_POST.php'),
+        Uri.parse('http://172.22.0.42/kejaksaan_server/JaksaMasukSekolah_POST.php'),
       );
 
       request.fields['namasekolah'] = txtNamaSekolah.text;

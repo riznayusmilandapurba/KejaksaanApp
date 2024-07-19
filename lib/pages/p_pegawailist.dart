@@ -33,7 +33,7 @@ class _PengaduanPegawaiListState extends State<PengaduanPegawaiList> {
 
   Future<void> _getPengaduanpegawai() async {
     try {
-      http.Response res = await http.get(Uri.parse('http://192.168.0.102/kejaksaan_server/p_pegawaiGET.php'));
+      http.Response res = await http.get(Uri.parse('http://172.22.0.42/kejaksaan_server/p_pegawaiGET.php'));
       if (res.statusCode == 200) {
         List<Datum> p_pegawaiList = ModelPPegawaiFromJson(res.body).data ?? [];
         setState(() {
@@ -68,42 +68,39 @@ class _PengaduanPegawaiListState extends State<PengaduanPegawaiList> {
   }
 
   void _deletePengaduan(int index) async {
-  Datum p_pegawai = _filteredPengaduanpegawai[index];
-  if (p_pegawai.status != 'approve' && p_pegawai.status != 'reject') {
-    // Lakukan penghapusan jika status bukan "approve" atau "reject"
-    try {
-      http.Response res = await http.post(
-        Uri.parse('http://192.168.0.102/kejaksaan_server/p_pegawaiDEL.php'),
-        body: {'id': p_pegawai.id.toString()},
-      );
-      if (res.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Data Pegawai berhasil dihapus')),
+    Datum p_pegawai = _filteredPengaduanpegawai[index];
+    if (p_pegawai.status != 'approve' && p_pegawai.status != 'reject') {
+      try {
+        http.Response res = await http.post(
+          Uri.parse('http://192.168.0.102/kejaksaan_server/p_pegawaiDEL.php'),
+          body: {'id': p_pegawai.id.toString()},
         );
-        _getPengaduanpegawai();
-      } else {
+        if (res.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Data Pegawai berhasil dihapus')),
+          );
+          _getPengaduanpegawai();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Gagal menghapus Data Pegawai')),
+          );
+        }
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menghapus Data Pegawai')),
+          SnackBar(content: Text(e.toString())),
         );
       }
-    } catch (e) {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text('Tidak dapat menghapus data dengan status "approve" atau "reject"')),
       );
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Tidak dapat menghapus data dengan status "approve" atau "reject"')),
-    );
   }
-}
-
-
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
         backgroundColor: Color.fromRGBO(107, 140, 66, 1),
         toolbarHeight: 105,
         title: Row(
@@ -119,7 +116,7 @@ Widget build(BuildContext context) {
                     hintText: 'Search laporan...',
                     hintStyle: GoogleFonts.lato(
                       fontSize: 16,
-                      color: Color.fromRGBO(107, 140, 66, 1)
+                      color: Color.fromRGBO(107, 140, 66, 1),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -142,100 +139,90 @@ Widget build(BuildContext context) {
           },
         ),
       ),
-    body: Padding(
-      padding: const EdgeInsets.all(24.0), // Atur jarak di sini
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              dataRowHeight: 60,
-              headingRowHeight: 80,
-              columnSpacing: 20,
-              columns: [
-                DataColumn(label: Text('No',
-                textAlign: TextAlign.center,
-                )),
-                DataColumn(label: Text('Nama Pelapor',
-                textAlign: TextAlign.center,
-                )),
-                DataColumn(label: Text('No. HP',
-                textAlign: TextAlign.center,
-                )),
-                DataColumn(label: Text('Status',
-                textAlign: TextAlign.center,
-                )),
-                DataColumn(label: Text('Menu',
-                textAlign: TextAlign.center,
-                )),
-              ],
-              rows: _filteredPengaduanpegawai.asMap().entries.map((entry) {
-                int index = entry.key + 1;
-                Datum data = entry.value;
-                return DataRow(
-                  cells: [
-                    DataCell(Text('$index')),
-                    DataCell(Text(data.namapelapor)),
-                    DataCell(Text(data.nohp)),
-                    DataCell(Text(data.status)),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.visibility),
-                            onPressed: (){
-                              Navigator.push(
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                dataRowHeight: 60,
+                headingRowHeight: 80,
+                columnSpacing: 20,
+                columns: [
+                  DataColumn(label: Text('No', textAlign: TextAlign.center)),
+                  DataColumn(label: Text('Nama Pelapor', textAlign: TextAlign.center)),
+                  DataColumn(label: Text('No. HP', textAlign: TextAlign.center)),
+                  DataColumn(label: Text('Status', textAlign: TextAlign.center)),
+                  DataColumn(label: Text('Menu', textAlign: TextAlign.center)),
+                ],
+                rows: _filteredPengaduanpegawai.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  int displayIndex = index + 1;
+                  Datum data = entry.value;
+                  return DataRow(
+                    cells: [
+                      DataCell(Text('$displayIndex')),
+                      DataCell(Text(data.namapelapor)),
+                      DataCell(Text(data.nohp)),
+                      DataCell(Text(data.status)),
+                      DataCell(
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.visibility),
+                              onPressed: () {
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => PengaduanPegawaiDetail(data)),
                                 );
-                            }
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: data.status == 'approve' || data.status == 'reject'
-                                ? null
-                                : () {
-                                    Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => PengaduanPegawaiEdit(
-                                      id: data.id,
-                                      namapelapor: data.namapelapor,
-                                      nohp: data.nohp,
-                                      ktp: data.ktp,
-                                      laporan: data.laporan,
-                                  )),
-                                );
-                                  },
-                            color: data.status == 'approve' || data.status == 'reject'
-                                ? Colors.grey
-                                : null,
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: data.status == 'approve' || data.status == 'reject'
-                                ? null
-                                : () {
-                                    _deletePengaduan;
-                                  },
-                            color: data.status == 'approve' || data.status == 'reject'
-                                ? Colors.grey
-                                : null,
-                          ),
-                        ],
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: data.status == 'approve' || data.status == 'reject'
+                                  ? null
+                                  : () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => PengaduanPegawaiEdit(
+                                          id: data.id,
+                                          namapelapor: data.namapelapor,
+                                          nohp: data.nohp,
+                                          ktp: data.ktp,
+                                          laporan: data.laporan,
+                                        )),
+                                      );
+                                    },
+                              color: data.status == 'approve' || data.status == 'reject'
+                                  ? Colors.grey
+                                  : null,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: data.status == 'approve' || data.status == 'reject'
+                                  ? null
+                                  : () {
+                                      _deletePengaduan(index);
+                                    },
+                              color: data.status == 'approve' || data.status == 'reject'
+                                  ? Colors.grey
+                                  : null,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }).toList(),
+                    ],
+                  );
+                }).toList(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-    floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Arahkan ke halaman tambah data
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => PengaduanPegawai()),
@@ -244,7 +231,7 @@ Widget build(BuildContext context) {
         child: Icon(Icons.add),
         backgroundColor: Color.fromRGBO(107, 140, 66, 1),
       ),
-    bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -265,7 +252,7 @@ Widget build(BuildContext context) {
             case 0:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Home()),
+                MaterialPageRoute(builder: (context) => Home(isAdmin: true)),
               );
               break;
             case 1:
@@ -283,6 +270,6 @@ Widget build(BuildContext context) {
           }
         },
       ),
-  );
-}
+    );
+  }
 }

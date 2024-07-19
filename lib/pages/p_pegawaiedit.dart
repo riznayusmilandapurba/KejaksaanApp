@@ -57,7 +57,7 @@ class _PengaduanPegawaiEditState extends State<PengaduanPegawaiEdit> {
     });
 
     try {
-      final url = Uri.parse('http://192.168.0.102/kejaksaan_server/p_pegawaiUPDATE.php');
+      final url = Uri.parse('http://172.22.0.42/kejaksaan_server/p_pegawaiUPDATE.php');
       final request = http.MultipartRequest('POST', url);
 
       request.fields.addAll({

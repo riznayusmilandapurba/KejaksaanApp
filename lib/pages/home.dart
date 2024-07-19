@@ -7,6 +7,7 @@ import 'package:kejaksaan/pages/p_alirankepercayaan.dart';
 import 'package:kejaksaan/pages/p_alirankepercayaanlist.dart';
 import 'package:kejaksaan/pages/p_pegawai.dart';
 import 'package:kejaksaan/pages/p_pegawailist.dart';
+import 'package:kejaksaan/pages/p_pegawailist_admin.dart';
 import 'package:kejaksaan/pages/p_tindakkorupsi.dart';
 import 'package:kejaksaan/pages/p_tindakkorupsilist.dart';
 import 'package:kejaksaan/pages/penyuluhanhukum.dart';
@@ -15,18 +16,18 @@ import 'package:kejaksaan/pages/poskopilkada.dart';
 import 'package:kejaksaan/pages/poskopilkadalist.dart';
 import 'package:kejaksaan/pages/user.dart';
 
-
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final bool isAdmin; // Pass the admin status through constructor
+
+  const Home({Key? key, required this.isAdmin}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-final bool isAdmin = true;
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
@@ -130,7 +131,11 @@ final bool isAdmin = true;
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PengaduanPegawaiList()), 
+                  MaterialPageRoute(
+                    builder: (context) => widget.isAdmin
+                        ? PengaduanPegawaiListAdmin() // Admin view
+                        : PengaduanPegawaiList(), // User view
+                  ),
                 );
               },
               child: Card(
@@ -228,7 +233,7 @@ final bool isAdmin = true;
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => JMSList(isAdmin: isAdmin)), 
+                  MaterialPageRoute(builder: (context) => JMSList(isAdmin: widget.isAdmin)), 
                 );
               },
               child: Card(
